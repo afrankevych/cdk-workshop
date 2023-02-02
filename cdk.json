@@ -2,13 +2,12 @@
   "app": "npx ts-node --prefer-ts-exts bin/cdk-workshop-2.ts",
   "watch": {
     "include": [
-      "**"
+      "dist"
     ],
     "exclude": [
       "README.md",
       "cdk*.json",
       "**/*.d.ts",
-      "**/*.js",
       "tsconfig.json",
       "package*.json",
       "yarn.lock",
