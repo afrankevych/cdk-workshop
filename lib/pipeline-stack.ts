@@ -28,6 +28,32 @@ export class WorkshopPipelineStack extends cdk.Stack {
             })
         });
 
-        pipeline.addStage(new PipelineStage(this, 'Deploy'));
+      const deploy = new PipelineStage(this, 'Deploy');
+      const deployStage = pipeline.addStage(deploy);
+
+        deployStage.addPost(
+          new CodeBuildStep('TestTableViewerEndpoint', {
+            projectName: 'TestTableViewerEndpoit',
+            envFromCfnOutputs: {
+              ENDPOINT_URL: deploy.hcViewerUrl
+            },
+            commands: [
+              'curl -Ssf $ENDPOINT_URL'
+            ]
+          })
+        );
+      deployStage.addPost(
+        new CodeBuildStep('TestAPIGatewayEndpoint', {
+          projectName: 'TestAPIGatewayEndpoit',
+          envFromCfnOutputs: {
+            ENDPOINT_URL: deploy.hcEndpoint
+          },
+          commands: [
+            'curl -Ssf $ENDPOINT_URL',
+            'curl -Ssf $ENDPOINT_URL/hello',
+            'curl -Ssf $ENDPOINT_URL/world'
+          ]
+        })
+      );
     }
 }
